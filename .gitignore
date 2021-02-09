@@ -3,3 +3,4 @@ obj/*
 gtfs/*
 !gtfs/readme.md
 !gtfs/download.sh
+output/*
