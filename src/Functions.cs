@@ -60,6 +60,7 @@ namespace Nixill.GTFS
           // Now merge the listings
           List<string> foundStops = new List<string>(outStops);
           List<string> addingStops = new List<string>();
+          string lastFoundStop = null;
 
           foreach (string stop in newStops)
           {
@@ -76,6 +77,9 @@ namespace Nixill.GTFS
                 outStops.InsertRange(outIndex, addingStops);
                 addingStops.Clear();
               }
+
+              // Also, set the last found stop to this one
+              lastFoundStop = stop;
             }
             else
             {
@@ -83,8 +87,16 @@ namespace Nixill.GTFS
             }
           }
 
-          // Add stray stops on the end
-          outStops.AddRange(addingStops);
+          // Add stray stops just after the last found stop
+          if (lastFoundStop != null)
+          {
+            outStops.InsertRange(outStops.IndexOf(lastFoundStop) + 1, addingStops);
+          }
+          else
+          {
+            // Or on the end if the two segments are, somehow, not linked
+            outStops.AddRange(addingStops);
+          }
 
           // Make sure outStops only contains items once
           outStops = outStops.Distinct().ToList();
