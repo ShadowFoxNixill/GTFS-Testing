@@ -98,10 +98,11 @@ namespace Nixill.GTFS
         var tripTimes =
           (from times in feed.StopTimes
            where times.TripId == tripId && stopOrder.Contains(times.StopId)
+           group times by new { times.TripId, times.StopId } into times2
            select new
            {
-             times.StopId,
-             times.DepartureTime
+             times2.First().StopId,
+             times2.First().DepartureTime
            }).ToDictionary(x => x.StopId, x => x.DepartureTime.Value);
 
         int sortTime = 0;

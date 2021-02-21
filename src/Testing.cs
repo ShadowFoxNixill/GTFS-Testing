@@ -13,7 +13,7 @@ namespace Nixill.GTFS
     static void Main(string[] args)
     {
       var reader = new GTFSReader<GTFSFeed>();
-      GTFSFeed feed = reader.Read("gtfs/smart_gtfs_2009-01.zip");
+      GTFSFeed feed = reader.Read("gtfs/ddot_gtfs.zip");
 
       TimepointStrategy strat = TimepointFinder.GetTimepointStrategy(feed);
 
