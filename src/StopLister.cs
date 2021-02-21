@@ -7,9 +7,22 @@ using System;
 
 namespace Nixill.GTFS
 {
-  public static class Functions
+  /// <summary>
+  /// Provides a method to sort the stops of a route in order.
+  /// </summary>
+  public static class StopLister
   {
-    public static List<Stop> GetStopOrder(GTFSFeed feed, string route, DirectionType? direction = null)
+    /// <summary>
+    /// Lists the stops along a route, in order.
+    /// </summary>
+    /// <param name="feed">The GTFS feed to use.</param>
+    /// <param name="route">The ID of the route to get stops for.</param>
+    /// <param name="direction">
+    /// The direction of trips to get. Must exactly match the direction
+    /// provided in GTFS; <c>null</c> here does not match "any direction"
+    /// in the data.
+    /// </param>
+    public static IEnumerable<Stop> GetStopOrder(GTFSFeed feed, string route, DirectionType? direction = null)
     {
       var routeStopTimes =
         from stopTimes in feed.StopTimes
@@ -21,7 +34,7 @@ namespace Nixill.GTFS
       // If it's empty, return empty list. Though that shouldn't be possible in well-formed GTFS.
       if (routeStopTimes.Count() == 0)
       {
-        return new List<Stop>();
+        return Enumerable.Empty<Stop>();
       }
 
       // First, we'll need a listing of every trip, how many stops it has, and how many of those we've already listed.
@@ -118,13 +131,22 @@ namespace Nixill.GTFS
           };
       }
 
-      // One last thing: Convert stop IDs to actual Stops
       return
-        (from stopIds in outStops
-         join stops in feed.Stops on stopIds equals stops.Id
-         select stops).ToList();
+        from stops in outStops
+        join feedStops in feed.Stops on stops equals feedStops.Id
+        select feedStops;
     }
 
-    public static List<Stop> GetStopOrder(GTFSFeed feed, Route route, DirectionType? direction = null) => GetStopOrder(feed, route.Id, direction);
+    /// <summary>
+    /// Lists the stops along a route, in order.
+    /// </summary>
+    /// <param name="feed">The GTFS feed to use.</param>
+    /// <param name="route">The Route to get stops for.</param>
+    /// <param name="direction">
+    /// The direction of trips to get. Must exactly match the direction
+    /// provided in GTFS; <c>null</c> here does not match "any direction"
+    /// in the data.
+    /// </param>
+    public static IEnumerable<Stop> GetStopOrder(GTFSFeed feed, Route route, DirectionType? direction = null) => GetStopOrder(feed, route.Id, direction);
   }
 }
