@@ -56,9 +56,11 @@ namespace Nixill.GTFS
         {
           using StreamWriter output = new StreamWriter($"output/schedules/{route.Id}.md");
 
+          output.WriteLine("# " + (route.ShortName ?? "") + ((route.ShortName != null && route.LongName != null) ? " - " : "") + (route.LongName ?? ""));
+
           foreach (DirectionType? dir in dirs)
           {
-            output.WriteLine("# " + dir switch
+            output.WriteLine("## " + dir switch
             {
               DirectionType.OneDirection => "Main Direction",
               DirectionType.OppositeDirection => "Opposite Direction",
@@ -70,7 +72,7 @@ namespace Nixill.GTFS
 
             foreach (string service in services)
             {
-              output.WriteLine("## Service " + service);
+              output.WriteLine("### Service " + service);
               output.WriteLine("*" + serviceDescriptions[service] + "*");
               output.WriteLine();
 
